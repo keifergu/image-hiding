@@ -27,9 +27,31 @@ function dataBlockRead (bmpData) {
   return info;
 }
 
+function tailHide (bmpData, info) {
+  const buffer = Buffer.from(info);
+  // 将加密数据长度存储
+  const savedLength = String(buffer.length).split('')
+  dataBlockHide(bmpData, savedLength)
+
+  return Buffer.concat([bmpData, buffer], bmpData.length + buffer.length);
+}
+
+function tailRead (bmpData) {
+  const hideLength = Number(dataBlockRead(bmpData).join(''))
+
+  const buf = Buffer.allocUnsafe(hideLength);
+  bmpData.copy(buf, 0, bmpData.length - hideLength)
+  
+  return buf;
+}
+
 module.exports = {
   data: {
     hide: dataBlockHide,
     read: dataBlockRead,
+  },
+  tail: {
+    hide: tailHide,
+    read: tailRead,
   }
 }

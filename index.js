@@ -52,18 +52,19 @@ function headerInfoRead (bmpData) {
 
 const bmpPath = 'image.bmp';
 const newBmpPath = 'newImage.bmp';
-const dataBmpPath = 'dataImage.bmp'
+const dataBmpPath = 'dataImage.bmp';
+const tailBmpPath = 'tailImage.bmp';
 
 const bmpFile = readBmp(bmpPath);
-const data = [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32]
+let data = [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32]
 
 function test (hide, read, path) {
-  hide(bmpFile.data, data);
-  writeBmp(path, bmpFile);
+  const newBuffer = hide(bmpFile.data, data);
+  writeBmp(path, newBuffer ? newBuffer : bmpFile);
   const readData = read(readBmp(path).data);
   for (let i = 0; i < data.length; i++) {
     if (readData[i] !== data[i]) {
-      console.log(false);
+      console.log(readData);
       return;
     } 
   }
@@ -71,6 +72,8 @@ function test (hide, read, path) {
 }
 
 test(imageHide.data.hide, imageHide.data.read, dataBmpPath)
+data = [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32]
+test(imageHide.tail.hide, imageHide.tail.read, tailBmpPath)
 /**
  * 将字符串转换为编码数组
  * @param {String} str 需要转换的字符串
