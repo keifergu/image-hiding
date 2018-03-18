@@ -1,5 +1,6 @@
 const fs = require('fs')
 const bmp = require('bmp-js')
+const imageHide = require('./data-hide.js')
 
 function readBmp (filePath) {
   const bmpBuffer = fs.readFileSync(filePath)
@@ -65,37 +66,10 @@ const bmpFile = readBmp(bmpPath);
 // const info = headerInfoRead(newBmp.data);
 // console.log(info);
 
-const dataOffsetStart = 56
-const offset = 8
-
-function dataInfoSave (bmpData, info) {
-  // 使用前两个字节存储数据长度
-  const length = info.length;
-  bmpData[dataOffsetStart] = length / 255;
-  bmpData[dataOffsetStart + offset] = length % 255;
-
-  for(let i = dataOffsetStart + offset * 2; i < bmpData.length; i += offset) {
-    bmpData[i] = info.shift()
-    if (info.length === 0 ) break;
-  }
-}
-
-function dataInfoRead (bmpData) {
-  let info = [];
-  const start = dataOffsetStart;
-  const length = bmpData[start] * 255 + bmpData[start + offset]
-  const dataOffsetEnd = dataOffsetStart + (length + 2) * offset;
-
-  for(let i = dataOffsetStart + offset * 2; i < dataOffsetEnd; i += offset) {
-    info.push(bmpData[i]);
-  } 
-  return info;
-}
-
-dataInfoSave(bmpFile.data, [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32])
+imageHide.data.hide(bmpFile.data, [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32])
 writeBmp(dataBmpPath, bmpFile);
 
-const data = dataInfoRead(readBmp(dataBmpPath).data)
+const data = imageHide.data.read(readBmp(dataBmpPath).data)
 console.log(data);
 /**
  * 将字符串转换为编码数组
