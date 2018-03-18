@@ -55,22 +55,22 @@ const newBmpPath = 'newImage.bmp';
 const dataBmpPath = 'dataImage.bmp'
 
 const bmpFile = readBmp(bmpPath);
+const data = [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32]
 
-// const info1 = heaerInfoRead(bmpFile.data);
-// console.log(info1.slice(0, 5));
+function test (hide, read, path) {
+  hide(bmpFile.data, data);
+  writeBmp(path, bmpFile);
+  const readData = read(readBmp(path).data);
+  for (let i = 0; i < data.length; i++) {
+    if (readData[i] !== data[i]) {
+      console.log(false);
+      return;
+    } 
+  }
+  console.log(true);
+}
 
-// headerInfoSave(bmpFile.data, [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]);
-// writeBmp(newBmpPath, bmpFile);
-
-// const newBmp = readBmp(newBmpPath);
-// const info = headerInfoRead(newBmp.data);
-// console.log(info);
-
-imageHide.data.hide(bmpFile.data, [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32])
-writeBmp(dataBmpPath, bmpFile);
-
-const data = imageHide.data.read(readBmp(dataBmpPath).data)
-console.log(data);
+test(imageHide.data.hide, imageHide.data.read, dataBmpPath)
 /**
  * 将字符串转换为编码数组
  * @param {String} str 需要转换的字符串
