@@ -21,7 +21,7 @@ const fieldsOffset = [
   [52, 3],
 ];
 
-function heaerInfoSave (bmpData, info) {
+function headerInfoSave (bmpData, info) {
   if (info.length > 15) throw new Error('Info is too long.')
   let savedSize = 0;
   fieldsOffset.forEach(([startOffset, length]) => {
@@ -33,7 +33,7 @@ function heaerInfoSave (bmpData, info) {
   })
 }
 
-function heaerInfoRead (bmpData) {
+function headerInfoRead (bmpData) {
   const info = [];
 
   let savedSize = 0;
@@ -51,15 +51,66 @@ function heaerInfoRead (bmpData) {
 
 const bmpPath = 'image.bmp';
 const newBmpPath = 'newImage.bmp';
+const dataBmpPath = 'dataImage.bmp'
 
 const bmpFile = readBmp(bmpPath);
 
 // const info1 = heaerInfoRead(bmpFile.data);
 // console.log(info1.slice(0, 5));
 
-heaerInfoSave(bmpFile.data, [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
-writeBmp(newBmpPath, bmpFile);
+// headerInfoSave(bmpFile.data, [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]);
+// writeBmp(newBmpPath, bmpFile);
 
-const newBmp = readBmp(newBmpPath);
-const info = heaerInfoRead(newBmp.data);
-console.log(info);
+// const newBmp = readBmp(newBmpPath);
+// const info = headerInfoRead(newBmp.data);
+// console.log(info);
+
+const dataOffsetStart = 56
+const offset = 8
+
+function dataInfoSave (bmpData, info) {
+  // 使用前两个字节存储数据长度
+  const length = info.length;
+  bmpData[dataOffsetStart] = length / 255;
+  bmpData[dataOffsetStart + offset] = length % 255;
+
+  for(let i = dataOffsetStart + offset * 2; i < bmpData.length; i += offset) {
+    bmpData[i] = info.shift()
+    if (info.length === 0 ) break;
+  }
+}
+
+function dataInfoRead (bmpData) {
+  let info = [];
+  const start = dataOffsetStart;
+  const length = bmpData[start] * 255 + bmpData[start + offset]
+  const dataOffsetEnd = dataOffsetStart + (length + 2) * offset;
+
+  for(let i = dataOffsetStart + offset * 2; i < dataOffsetEnd; i += offset) {
+    info.push(bmpData[i]);
+  } 
+  return info;
+}
+
+dataInfoSave(bmpFile.data, [255,255,3,4,5,6,7,8,9,10,11,12,12,123,123,134,23,11,32])
+writeBmp(dataBmpPath, bmpFile);
+
+const data = dataInfoRead(readBmp(dataBmpPath).data)
+console.log(data);
+/**
+ * 将字符串转换为编码数组
+ * @param {String} str 需要转换的字符串
+ * @return 转换后的编码数组
+ */
+function stringToCodeList (str) {
+  const codeList = str.split('').map(char => char.charCodeAt(0))
+  return codeList;
+}
+
+/**
+ * 将编码数组转换为字符串
+ * @param {Array} codeList 转换好的编码数组
+ */
+function codeListToString (codeList) {
+  return String.fromCharCode(...codeList);
+}
