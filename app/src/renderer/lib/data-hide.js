@@ -1,5 +1,3 @@
-const bmp = require('bmp-js')
-
 const dataOffsetStart = 56
 const offset = 8
 
@@ -23,7 +21,7 @@ function dataBlockRead (bmpData) {
 
   for(let i = dataOffsetStart + offset * 2; i < dataOffsetEnd; i += offset) {
     info.push(bmpData[i]);
-  } 
+  }
   return info;
 }
 
@@ -41,7 +39,7 @@ function tailRead (bmpData) {
 
   const buf = Buffer.allocUnsafe(hideLength);
   bmpData.copy(buf, 0, bmpData.length - hideLength)
-  
+
   return buf;
 }
 

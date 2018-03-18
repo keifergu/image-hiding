@@ -12,6 +12,19 @@ function writeBmp (filePath, bmpData) {
   fs.writeFileSync(filePath, newBmp.data)
 }
 
+function encode (inputPath, data, method, outputPath) {
+  const bmpFile = readBmp(inputPath);
+  const alog = imageHide[method];
+  alog.hide(bmpFile.data, data.split(''));
+  writeBmp(outputPath, bmpFile);
+}
+
+function decode(inputPath, method) {
+  const bmpFile = readBmp(inputPath);
+  const alog = imageHide[method];
+  return alog.read(bmpFile.data).join('');
+}
+/*
 // 可以存取信息的文件头部偏移量
 // 开始位置，可以存储的字节数
 const fieldsOffset = [
@@ -66,7 +79,7 @@ function test (hide, read, path) {
     if (readData[i] !== data[i]) {
       console.log(readData);
       return;
-    } 
+    }
   }
   console.log(true);
 }
@@ -79,15 +92,22 @@ test(imageHide.tail.hide, imageHide.tail.read, tailBmpPath)
  * @param {String} str 需要转换的字符串
  * @return 转换后的编码数组
  */
-function stringToCodeList (str) {
-  const codeList = str.split('').map(char => char.charCodeAt(0))
-  return codeList;
-}
+// function stringToCodeList (str) {
+//   const codeList = str.split('').map(char => char.charCodeAt(0))
+//   return codeList;
+// }
 
 /**
  * 将编码数组转换为字符串
  * @param {Array} codeList 转换好的编码数组
  */
-function codeListToString (codeList) {
-  return String.fromCharCode(...codeList);
+// function codeListToString (codeList) {
+//   return String.fromCharCode(...codeList);
+// }
+
+
+module.exports = {
+  encode,
+  decode
 }
+
