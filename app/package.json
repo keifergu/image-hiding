@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "Iamge-Hidden",
   "version": "0.0.0",
   "author": "Keifer Gu <keifergu@gmail.com>",
   "description": "An electron-vue project",
@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "bmp-js": "^0.0.3",
     "element-ui": "^2.2.2",
     "postcss-import": "^11.1.0",
     "postcss-url": "^7.3.1",

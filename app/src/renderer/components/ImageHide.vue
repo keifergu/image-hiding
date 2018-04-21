@@ -23,7 +23,6 @@
     </div>
     <div>
       <el-button type="primary" @click="generater">生成加密图像</el-button>
-      <a :href="outputPath">下载加密图像</a>
     </div>
     <hr>
     <div>
@@ -62,7 +61,9 @@ export default {
       str: '',
       method: 'data',
       imageSrc: '',
-      outputPath: './static/new.bmp',
+      rawInputSrc: '',
+      file: '',
+      outputPath: '',
       decodePath: '',
       decodeStr: '',
       de_method: 'data',
@@ -73,12 +74,16 @@ export default {
   methods: {
     fileHandle (fileObj) {
       const file = fileObj.raw;
-      const imageSrc = `./static/${file.name}`;
+      this.file = fileObj;
+      console.log(fileObj);
+      this.rawInputSrc = file.path;
+      this.$message('文件选择成功');
+/*      const imageSrc = `./static/${file.name}`;
       fs.readFile(file.path, (err, res) => {
         fs.writeFile(this.imageSrc, res, () => {
           this.imageSrc = imageSrc;
         })
-      })
+      })*/
     },
     decodeFileHandle () {
       const file = this.$refs.decode.files[0];
@@ -89,9 +94,16 @@ export default {
       this.decodeStr = hide.decode(decodePath, 'data');
     },
     generater () {
-      const { imageSrc, str, method, outputPath } = this;
-      hide.encode(imageSrc, str, 'data', outputPath);
-      this.$message('加密成功，请点击下载');
+      const { rawInputSrc, str, method, file } = this;
+      const fileName = file.name.split('.bmp')[0];
+      const HOME = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
+      const outputPath = `${HOME}/Desktop/${fileName}_encode.bmp`;
+      try {
+        hide.encode(rawInputSrc, str, 'data', outputPath);
+      } catch (error) {
+        alert(error, rawInputSrc)
+      }
+      this.$message(`加密成功，已经保存在${outputPath}`);
     }
   }
 }
